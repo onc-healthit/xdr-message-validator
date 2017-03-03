@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:sws="http://www.springframework.org/schema/web-services"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/web-services
+       http://www.springframework.org/schema/web-services/web-services-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       
+    <sws:annotation-driven/>
+
+    <bean class="org.springframework.ws.transport.http.WebServiceMessageReceiverHandlerAdapter">
+    	<property name="messageFactory">
+		<ref bean="messageFactory"/>
+	</property>
+    </bean>
+       
+       
+      <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
+		<description>A message factory to support SOAP 1.2</description>
+        <property name="soapVersion">
+            <util:constant static-field="org.springframework.ws.soap.SoapVersion.SOAP_12"/>
+        </property>
+	</bean>
+
+   	<bean class="org.springframework.ws.server.endpoint.mapping.SimpleMethodEndpointMapping">
+		<property name="endpoints">
+			<ref bean="XDRServiceEndpoint"/>
+		</property>
+		<property name="methodPrefix" value="handle"></property>		
+		<property name="interceptors">
+ 		<list>
+ 			<!--  enable logging interceptor - BEGIN -->
+   			<bean class="org.springframework.ws.server.endpoint.interceptor.PayloadLoggingInterceptor">
+ 				<property name="logRequest" value="true"/>
+  				<property name="logResponse" value="true" />
+   			</bean>
+   			<bean class="gov.onc.xdrtesttool.xml.XdrMustUnderstandInterceptor"/>
+ 		</list>
+ 		
+		</property>
+	</bean>
+	<sws:static-wsdl id="XDRService" location="/wsdl/XDS.b_DocumentRepository.wsdl"/>
+	
+	<bean id="XDRServiceEndpoint" class="gov.onc.xdrtesttool.xdrservice.endpoint.XDRSeviceMessageReceiverEndpoint">
+	  <property name="validators">
+	  <list>
+	  	<bean class=" gov.onc.xdrtesttool.validate.SOAPGeneralValidator"/>
+	  	<bean class=" gov.onc.xdrtesttool.validate.WSAddressingValidator"/>
+	  	<bean class=" gov.onc.xdrtesttool.validate.SOAPDirectHeaderValidator"/>
+	  	<bean class=" gov.onc.xdrtesttool.validate.EbRimValidator"/>
+		<bean class=" gov.onc.xdrtesttool.validate.XDRRequestValidator"/>
+	  	<!--
+	  	<bean class=" gov.onc.xdrtesttool.validate.XDSDocumentEntryValidator"/>
+	  	<bean class=" gov.onc.xdrtesttool.validate.XDSAssociationValidator"/>
+	  	<bean class=" gov.onc.xdrtesttool.validate.XDSSubmissionSetValidator"/>
+	  	<bean class=" gov.onc.xdrtesttool.validate.XDSFolderValidator"/>
+	  	<bean class=" gov.onc.xdrtesttool.validate.MtomXopValidator"/>
+	  	-->
+	  </list>
+	  </property>
+	</bean>	
+	
+</beans>
