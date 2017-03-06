@@ -5,13 +5,17 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPModelBuilder;
-import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapEnvelope;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 public class XMLParser {
@@ -78,10 +82,9 @@ public class XMLParser {
 	}
 
 	
-	static public InputStream getEnvelopeAsInputStream(SoapMessage soapMsg) throws IOException
-	{
-		OutputStream output = new ByteArrayOutputStream();
-		soapMsg.writeTo(output);
+	static public InputStream getEnvelopeAsInputStream(SoapEnvelope soapMsg) throws IOException, TransformerException {
+		//OutputStream output = new ByteArrayOutputStream();
+		//soapMsg.writeTo(output);
 /*
 		String outputDir = System.getProperty("java.io.tmpdir");
 		Date date = new Date();
@@ -94,7 +97,11 @@ public class XMLParser {
 		soapMsg.writeTo(ofile);
 		ofile.close();
 */	
-		InputStream input = new ByteArrayInputStream(((ByteArrayOutputStream) output).toByteArray());
-		return input;
+		//InputStream input = new ByteArrayInputStream(((ByteArrayOutputStream) output).toByteArray());
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		Source xmlSource = soapMsg.getSource();
+		Result outputTarget = new StreamResult(outputStream);
+		TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+		return new ByteArrayInputStream(outputStream.toByteArray());
 	}
 }

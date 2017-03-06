@@ -102,7 +102,7 @@ public class XdrMustUnderstandInterceptor implements SoapEndpointInterceptor {
 	{
 		try {
 			OMElement element = XMLParser.parseXMLSource(XMLParser
-					.getEnvelopeAsInputStream(soapMessage));
+					.getEnvelopeAsInputStream(soapMessage.getEnvelope()));
 			if(element == null)
 			{
 				log.error("Invalid SOAP Request. Unable to parse.");
