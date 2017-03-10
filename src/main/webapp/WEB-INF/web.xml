@@ -3,8 +3,16 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          id="WebApp_ID_XDR" version="3.0">
   <display-name>xdrmessagevalidator</display-name>
+  <context-param>
+    <param-name> contextConfigLocation </param-name>
+    <param-value>
+      /WEB-INF/Dispatcher-servlet.xml
+      /WEB-INF/rest-servlet.xml
+    </param-value>
+  </context-param>
+
   <listener>
-    <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    <listener-class> org.springframework.web.context.ContextLoaderListener </listener-class>
   </listener>
   <servlet>
     <servlet-name>Dispatcher</servlet-name>
@@ -14,5 +22,16 @@
   <servlet-mapping>
     <servlet-name>Dispatcher</servlet-name>
     <url-pattern>/Dispatcher/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>rest</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>rest</servlet-name>
+    <url-pattern>/messagelogs/*</url-pattern>
   </servlet-mapping>
 </web-app>

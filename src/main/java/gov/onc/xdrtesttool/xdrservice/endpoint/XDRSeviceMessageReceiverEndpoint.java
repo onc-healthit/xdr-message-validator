@@ -1,42 +1,46 @@
 package gov.onc.xdrtesttool.xdrservice.endpoint;
 
+import gov.onc.xdrtesttool.entities.MessageLog;
 import gov.onc.xdrtesttool.error.MessageReader;
 import gov.onc.xdrtesttool.error.XDRMessageRecorder;
+import gov.onc.xdrtesttool.services.MessageLogService;
 import gov.onc.xdrtesttool.validate.XDRValidator;
+import gov.onc.xdrtesttool.xml.XMLParser;
+import org.apache.axiom.om.OMElement;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.transport.context.TransportContext;
+import org.springframework.ws.transport.context.TransportContextHolder;
+import org.springframework.ws.transport.http.HttpServletConnection;
 import org.springframework.xml.transform.StringSource;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamResult;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.UriBuilder;
+import javax.xml.transform.Source;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.SOAPBinding;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Endpoint(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 @Addressing(enabled=true, required=true)
-public class XDRSeviceMessageReceiverEndpoint {
+public class XDRSeviceMessageReceiverEndpoint extends SpringBeanAutowiringSupport{
 	private final Logger log = Logger.getLogger(this.getClass().toString());
 	private static final String NAMESPACE_RIM_URI = "urn:ihe:iti:xds-b:2007";
-
 	public List<XDRValidator> validators = new ArrayList<XDRValidator>();
-
-	private Source response; 
-	public XDRSeviceMessageReceiverEndpoint() {
-	}
+	private Source response;
+	@Autowired
+	private MessageLogService messageLogService;
 
 	public List<XDRValidator> getValidators() {
 		return validators;
@@ -49,39 +53,10 @@ public class XDRSeviceMessageReceiverEndpoint {
 	public @ResponsePayload Source handleProvideAndRegisterDocumentSetRequest(
 			@RequestPayload Source source, MessageContext messageContext)
 			throws Exception {
-
-		String xmlFile = xmlToString(source);
-
-		log.info("Request message content = "+
-		xmlFile);
-
 		SoapMessage soapMessage = (SoapMessage) messageContext.getRequest();
+		MessageLog messageLog = new MessageLog();
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		InputSource is = new InputSource(new StringReader(xmlFile));
-		Document doc = builder.parse(is);
-		NodeList nodeList = doc.getElementsByTagName("rim:Slot");
-
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node node = nodeList.item(i);
-
-			if (node.hasAttributes()) {
-				Attr attr = (Attr) node.getAttributes().getNamedItem("name");
-				if (attr != null) {
-					String attribute = attr.getValue();
-					log.info("attribute: " + attribute);
-					if (attribute != null
-							&& attribute.equalsIgnoreCase("sourcePatientId")) {
-						String value = node.getTextContent().trim();
-						log.info("value: " + value);
-					}
-
-				}
-			}
-		}
 		XDRMessageRecorder errorRecorder = new XDRMessageRecorder();
-		//ValidationUtil.validateSchema(soapMessage, errorRecorder);
 
 		if (validators != null && validators.size() > 0) {
 			for (XDRValidator validator : validators) {
@@ -91,72 +66,81 @@ public class XDRSeviceMessageReceiverEndpoint {
 		}
 		MessageReader reader = new MessageReader(errorRecorder);
 		StringSource responseSource = reader.buildResponse();
-		log.info("Response message content = " + responseSource.toString());
 		response = responseSource;
-		writeResponseToLog(messageContext, responseSource);
-		return responseSource;
 
+		messageLog.setFromAddress(this.getFromAddress(soapMessage));
+		messageLog.setIpAddress(this.geIpAddress());
+		messageLog.setRequest(this.getSoapRequest(soapMessage));
+		messageLog.setResponse(responseSource.toString());
+		messageLog.setDateLogged(new Date().toString());
+		messageLogService.saveLog(messageLog);
+		return responseSource;
 	}
 
-	private void writeResponseToLog(MessageContext messageContext, StringSource responseSource)
-	{
-		OutputStream os = null;
-		PrintStream printStream = null;
+	private String getSoapRequest(SoapMessage soapMessage) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		soapMessage.writeTo(out);
+		return new String(out.toByteArray());
+	}
+
+	private String geIpAddress(){
+		TransportContext context = TransportContextHolder.getTransportContext();
+		HttpServletConnection connection = (HttpServletConnection )context.getConnection();
+		HttpServletRequest request = connection.getHttpServletRequest();
+		return request.getRemoteAddr();
+	}
+
+	private String getFromAddress(SoapMessage soapMessage) {
 		try {
-			String logOutputDir = (String)messageContext.getProperty("LOG_OUTPUT_DIR");
-			String outputId = (String)messageContext.getProperty("LOG_OUTPUT_NAME");
-			String  logFileName = "Response_"+ outputId + ".xml";
-			File logDir = new File(logOutputDir);
-			if (!logDir.exists()) logDir.mkdirs();
-				os = new FileOutputStream(logDir.getAbsolutePath() +File.separatorChar
-				        + logFileName);
-			printStream = new PrintStream(os);
-			printStream.print(responseSource);
-		    os.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally
-		{
-			if(os != null)
-			{
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			OMElement element = XMLParser.parseXMLSource(XMLParser
+					.getEnvelopeAsInputStream(soapMessage.getEnvelope()));
+			if(element == null) {
+				log.error("Invalid SOAP Request. Unable to parse.");
+				return null;
+			}
+
+			OMElement header = null;
+			Iterator headerIter = element.getChildrenWithLocalName("Header");
+			if (!headerIter.hasNext()) {
+				log.error("Header is missing from the request");
+				return null;
+			} else
+				header = (OMElement) headerIter.next();
+
+			if(header == null) {
+				log.error("Header is missing from the request");
+				return null;
+			} else {
+				Iterator addressIter = header.getChildrenWithLocalName("addressBlock");
+				if(!addressIter.hasNext()) {
+					log.error("Address is missing from the Header");
+					return null;
+				} else {
+					//S:Envelope/S:Header/direct:AddressBlock - Optional
+					OMElement addressElement = (OMElement)addressIter.next();
+
+					Iterator fromIter = addressElement.getChildrenWithLocalName("from");
+					if(!fromIter.hasNext()) {
+						log.error("Address from is missing from the Header");
+						return null;
+					} else {
+						OMElement fromElement = (OMElement) fromIter.next();
+						String fromAddr = null;
+						try {
+							UriBuilder.fromUri(fromElement.getText());
+							fromAddr = fromElement.getText();
+						} catch(IllegalArgumentException e) {
+							log.error("Invalid from Address in the Header");
+							return null;
+						}
+						return fromAddr;
+					}
 				}
 			}
-			if(printStream != null)
-				printStream.close();
-		}
-
-	}
-	
-	public Source getResponse()
-	{
-		return response;
-	}
-	
-
-	private String xmlToString(Source source) {
-		try {
-			StringWriter stringWriter = new StringWriter();
-			Result result = new StreamResult(stringWriter);
-			TransformerFactory factory = TransformerFactory.newInstance();
-			Transformer transformer = factory.newTransformer();
-			transformer.transform(source, result);
-			return stringWriter.getBuffer().toString();
-		} catch (TransformerConfigurationException e) {
+		} catch(Exception e) {
 			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
+			log.error("Failed to get from address from SOAP Header");
 		}
 		return null;
 	}
-
 }

@@ -59,20 +59,20 @@ public class MessageReader {
         }
 
         if(errorFlag)
-        	sb.append(" status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Failure\"> ");
+        	sb.append(" status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Failure\">\r\n ");
         else if(warningFlag)
-        	sb.append(" status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:PartialSuccess\"> ");
+        	sb.append(" status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:PartialSuccess\">\r\n ");
         else
-        	sb.append(" status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success\"> ");
+        	sb.append(" status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success\">\r\n ");
         
         if(errorStr.length() > 0)
         {
-        	sb.append("<rs:RegistryErrorList>");
-        	sb.append(errorStr.toString());
-        	sb.append("</rs:RegistryErrorList>");
+        	sb.append("<rs:RegistryErrorList>\r\n");
+        	sb.append(errorStr.toString() + "\r\n");
+        	sb.append("</rs:RegistryErrorList>\r\n");
         }
-        sb.append("</rs:RegistryResponse>");
-	    return new StringSource(sb.toString());
+        sb.append("</rs:RegistryResponse>\r\n");
+	    return new StringSource(sb.toString() + "\r\n");
 	}
 	
 	private String buildRegistryError(MessageRecorderItem item)
@@ -88,7 +88,7 @@ public class MessageReader {
 		str.append(" errorCode=\"" + item.getErrorCode() +"\"");
 		str.append(" codeContext=\"" + StringEscapeUtils.escapeXml(XDRMessages.instance.getErrorText(item.getErrorCode())) +"\"");
 		str.append(" location=\"" + item.getLocation() +"\"");
-		str.append(" />");
+		str.append(" />\r\n");
 		return str.toString();
 	}	
 }

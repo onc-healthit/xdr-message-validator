@@ -26,6 +26,8 @@
         </property>
 	</bean>
 
+	<bean id="xdrMustUnderstandInterceptor" class="gov.onc.xdrtesttool.xml.XdrMustUnderstandInterceptor"></bean>
+
    	<bean class="org.springframework.ws.server.endpoint.mapping.SimpleMethodEndpointMapping">
 		<property name="endpoints">
 			<ref bean="XDRServiceEndpoint"/>
@@ -38,7 +40,7 @@
  				<property name="logRequest" value="true"/>
   				<property name="logResponse" value="true" />
    			</bean>
-   			<bean class="gov.onc.xdrtesttool.xml.XdrMustUnderstandInterceptor"/>
+   			<ref bean="xdrMustUnderstandInterceptor"/>
  		</list>
  		
 		</property>
