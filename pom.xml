@@ -5,7 +5,7 @@
 	<inceptionYear>2014</inceptionYear>
 	<packaging>war</packaging>
 	<groupId>org.sitenv</groupId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<properties>
 		<spring.ws.version>2.4.0.RELEASE</spring.ws.version>
 		<log4j.version>1.2.16</log4j.version>
