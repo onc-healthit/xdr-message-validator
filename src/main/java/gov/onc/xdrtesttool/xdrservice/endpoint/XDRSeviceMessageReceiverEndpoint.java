@@ -77,10 +77,22 @@ public class XDRSeviceMessageReceiverEndpoint extends SpringBeanAutowiringSuppor
 		return responseSource;
 	}
 
-	private String getSoapRequest(SoapMessage soapMessage) throws IOException {
+	private String getSoapRequest(SoapMessage soapMessage)  {
+		String response = null;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		soapMessage.writeTo(out);
-		return new String(out.toByteArray());
+		try {
+			soapMessage.writeTo(out);
+			response = out.toString("UTF-8");
+		} catch (Exception e) {
+			response = "Error with attachment - request could not be saved.";
+		}finally {
+			try {
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
 	}
 
 	private String geIpAddress(){
