@@ -9,17 +9,16 @@
         <file>${HOME_LOG}.${timestamp}.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${HOME_LOG}.%d{MMM-dd HH:mm:ss,SSS}%i.log</fileNamePattern>
-            
-            <!-- each archived file, size max 10000KB -->
+            <fileNamePattern>${HOME_LOG}.-%d{yyyy-MM-dd}%i.log</fileNamePattern>
+            <!-- each archived file, size max 100MB -->
+             <!-- each archived file, size max 10000KB -->
             <maxFileSize>10000KB</maxFileSize>
             
             <maxHistory>20</maxHistory>
-
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d %5p %c{3.} [%t] - %m%n</pattern>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
         </encoder>
     </appender>
 
