@@ -3,7 +3,7 @@
 
     <property name="HOME_LOG" value="${catalina.home}/logs/xdrwebservice"/>
 
-<timestamp key="timestamp" datePattern="yyy-MM-dd"/>
+<timestamp key="timestamp" datePattern="yyyy-MM-dd"/>
 
     <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${HOME_LOG}.${timestamp}.log</file>
@@ -11,7 +11,6 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${HOME_LOG}.-%d{yyyy-MM-dd}%i.log</fileNamePattern>
             <!-- each archived file, size max 100MB -->
-             <!-- each archived file, size max 10000KB -->
             <maxFileSize>10000KB</maxFileSize>
             
             <maxHistory>20</maxHistory>
@@ -26,7 +25,7 @@
     <!-- AsyncAppender will drop events of level TRACE, DEBUG and INFO if its queue is 80% full -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="FILE-ROLLING" />
-        <!-- defaulr 256 -->
+        <!-- default 256 -->
         <queueSize>512</queueSize>
     </appender>
 
