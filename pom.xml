@@ -9,14 +9,15 @@
 	<properties>
 		<spring.ws.version>2.4.0.RELEASE</spring.ws.version>
 		<context.path>xdrmessagevalidator</context.path>
+		<logback.version>1.2.11</logback.version>
 	</properties>
 
 	<dependencies>
-		<dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.36</version>
-		</dependency>
+         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-api</artifactId>

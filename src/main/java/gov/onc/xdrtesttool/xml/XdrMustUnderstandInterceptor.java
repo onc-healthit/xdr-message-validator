@@ -1,6 +1,7 @@
 package gov.onc.xdrtesttool.xml;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
@@ -10,7 +11,7 @@ import org.springframework.ws.soap.server.SoapEndpointInterceptor;
 import javax.xml.namespace.QName;
 
 public class XdrMustUnderstandInterceptor implements SoapEndpointInterceptor {
-	private final Logger log = Logger.getLogger(this.getClass().toString());
+	private final Logger log = LoggerFactory.getLogger(this.getClass().toString());
 
 	@Override
     public boolean understands(SoapHeaderElement header) {
