@@ -1,3 +1,7 @@
+**Support**
+
+GitHub Issues are not used to manage issues for this repository. Please report any issues you may have on the [ETT Google Group](https://groups.google.com/g/edge-test-tool). Our technical team will address all questions there. Thank you.
+
 XDR Test Tool
 =============
 This tool supports testing XDR implementation over SOAP protocal. This tool takes XDR request over SOAP protocal as a request to validate and sends response with any validation messages. This tool also initiates XDR request over SOAP protocal to feed it as input to test any existing XDR implementations.
