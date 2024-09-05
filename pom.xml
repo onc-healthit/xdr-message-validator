@@ -5,19 +5,19 @@
 	<inceptionYear>2014</inceptionYear>
 	<packaging>war</packaging>
 	<groupId>org.sitenv</groupId>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<properties>
 		<spring.ws.version>2.4.0.RELEASE</spring.ws.version>
-		<log4j.version>1.2.16</log4j.version>
 		<context.path>xdrmessagevalidator</context.path>
+		<logback.version>1.2.11</logback.version>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
+         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-api</artifactId>

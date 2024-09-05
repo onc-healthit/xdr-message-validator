@@ -7,7 +7,8 @@ import gov.onc.xdrtesttool.services.MessageLogService;
 import gov.onc.xdrtesttool.validate.XDRValidator;
 import gov.onc.xdrtesttool.xml.XMLParser;
 import org.apache.axiom.om.OMElement;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.ws.context.MessageContext;
@@ -35,7 +36,7 @@ import java.util.List;
 @Endpoint(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 @Addressing(enabled=true, required=true)
 public class XDRSeviceMessageReceiverEndpoint extends SpringBeanAutowiringSupport{
-	private final Logger log = Logger.getLogger(this.getClass().toString());
+	private final Logger log = LoggerFactory.getLogger(this.getClass().toString());
 	private static final String NAMESPACE_RIM_URI = "urn:ihe:iti:xds-b:2007";
 	public List<XDRValidator> validators = new ArrayList<XDRValidator>();
 	private Source response;
