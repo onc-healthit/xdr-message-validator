@@ -7,7 +7,7 @@
 	<groupId>org.sitenv</groupId>
 	<version>1.0.2-SNAPSHOT</version>
 	<properties>
-		<spring.ws.version>2.4.0.RELEASE</spring.ws.version>
+		<spring.ws.version>3.1.8</spring.ws.version>
 		<context.path>xdrmessagevalidator</context.path>
 		<logback.version>1.2.11</logback.version>
 	</properties>
@@ -85,7 +85,7 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>1.9.2.RELEASE</version>
+			<version>1.11.23.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -180,7 +180,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
-                <version>4.2.4.RELEASE</version>
+                <version>5.3.33</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
