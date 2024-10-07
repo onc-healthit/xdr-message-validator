@@ -7,7 +7,7 @@
 	<groupId>org.sitenv</groupId>
 	<version>1.0.2-SNAPSHOT</version>
 	<properties>
-		<spring.ws.version>2.4.0.RELEASE</spring.ws.version>
+		<spring.ws.version>3.1.8</spring.ws.version>
 		<context.path>xdrmessagevalidator</context.path>
 		<logback.version>1.2.11</logback.version>
 	</properties>
@@ -85,7 +85,7 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>1.9.2.RELEASE</version>
+			<version>2.7.18</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -144,16 +144,11 @@
 			<artifactId>hsqldb</artifactId>
 			<version>2.3.4</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>5.0.7.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.1-api</artifactId>
-			<version>1.0.0.Final</version>
-		</dependency>
+			<dependency>
+			    <groupId>org.hibernate</groupId>
+			    <artifactId>hibernate-core</artifactId>
+			    <version>5.4.24.Final</version>
+			</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
@@ -162,12 +157,12 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.5.3</version>
+			<version>2.9.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.5.3</version>
+			<version>2.9.4</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.websocket</groupId>
@@ -180,7 +175,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
-                <version>4.2.4.RELEASE</version>
+                <version>5.3.39</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
